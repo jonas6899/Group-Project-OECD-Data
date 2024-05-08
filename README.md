@@ -1,12 +1,12 @@
 # Group-Project-OECD-Data
 
-Welcome to our innovative learning platform. With this program you can study fundamental concepts of the St. Galler Management Modell as well as basic corporate finance principles. Your hard-earned money can be used to buy watches, cars, boats and art in the shop. If you are a rather risk loving person you can try multiplying your money in our casino. Don´t forget to check out your treasures in the showroom. Have fun and best of luck!
+Welcome to our innovative OECD program focusing on data visualization. Here, you'll dive into pre-existing datasets, mastering the art of transforming raw information into insightful visual representations. Learn to interpret trends, patterns, and correlations within the provided data, equipping yourself with invaluable analytical skills. Whether you're exploring demographic shifts or economic indicators, our program empowers you to unlock the stories hidden within the numbers. Don't hesitate to experiment with different visualization techniques to present your findings effectively. Enjoy the journey of exploring and interpreting the ready-made data sets at your disposal!
 
-Menu                                                    |  SGMM / finance memory                              |  Roulette           
+Menu                                                    |  SGMM / finance memory                                  |  Roulette           
 :------------------------------------------------------:|:------------------------------------------------------:|:------------------------------------------------------:
 <img src="graphic/Readme/menu.png" width="220">         |  <img src="graphic/Readme/memory.png" width="230">     | <img src="graphic/Readme/roulette.png" width="330"> 
 
-Slot machine                                            |  Shop                                                  |  Showroom           
+xy                                                      |  xy                                                    |  xy           
 :------------------------------------------------------:|:------------------------------------------------------:|:------------------------------------------------------:
 <img src="graphic/Readme/slot.png" width="290">         |  <img src="graphic/Readme/shop.png" width="250">       | <img src="graphic/Readme/showroom.png" width="240">
 
