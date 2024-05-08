@@ -1,5 +1,4 @@
 # Group-Project-OECD-Data
-# LEARNxCASINO - Learn Hard, Play Hard!
 
 Welcome to our innovative learning platform. With this program you can study fundamental concepts of the St. Galler Management Modell as well as basic corporate finance principles. Your hard-earned money can be used to buy watches, cars, boats and art in the shop. If you are a rather risk loving person you can try multiplying your money in our casino. Don´t forget to check out your treasures in the showroom. Have fun and best of luck!
 
