@@ -11,14 +11,17 @@ import importlib
 
 
 # define styles and colors
-ctk.set_appearance_mode("light")  # sets mode to either light, dark or system settings
+ctk.set_appearance_mode("system")  # sets mode to either light, dark or system settings
 ctk.set_default_color_theme("green")  # sets default color theme to green, from green, blue and dark blue
 main_color = "#137C4C"
 secondary_color = "#1ABE73"
 widget_bg_dark = "#5D5D5D"
 widget_bg_light = "#C2C2C2"
+
 white = "#FFFFFF"
 black = "#000000"
+light_grey = "#ABB0B5"
+dark_grey = "#4B4D50"
 
 # check whether necessary data needs to be imported
 
@@ -41,7 +44,7 @@ if not all(os.path.exists(file_path) for file_path in file_paths):
             self.csv_download_label.pack(pady=30)
 
             # create progress bar
-            self.csv_pb = ctk.CTkProgressBar(self, width=250)
+            self.csv_pb = ctk.CTkProgressBar(self, width=250, progress_color=main_color)
             self.csv_pb.pack(pady=10)
             self.csv_pb.set(0)
 
@@ -96,7 +99,6 @@ else:
 master_df = pd.read_csv("Data/HC_Market.csv").set_index("REF_AREA")
 
 # initialize SubFrame class for general information display
-
 class SubFrame(ctk.CTkFrame):
     def __init__(self, master, text="", text2="-", **kwargs):
         # set default values for geometry and layout
@@ -114,6 +116,24 @@ class SubFrame(ctk.CTkFrame):
     def change_gi_data(self, new_data):
         self.text2 = new_data
         self.gi_data.configure(text=self.text2)
+
+# initialize frame class for cool sliders with labels
+class Sliders(ctk.CTkFrame):
+    def __init__(self, master, steps, width, start, end, text, color_right, color_left):
+        super().__init__(master, fg_color="transparent")
+        # Create a slider
+        self.slider = ctk.CTkSlider(self, width=width, number_of_steps=steps, from_=start, to=end, button_color=secondary_color,
+                         button_hover_color=main_color, fg_color=color_right, progress_color=color_left,
+                                    command=self.update_label)
+        self.slider.pack()  #
+        # Create a label to display the slider value
+        self.slider_value_label = ctk.CTkLabel(self, text=text, font=("Helvetica", 12))
+        self.slider_value_label.pack()
+
+    # define function to update label text according to slider position
+    def update_label(self, value):
+        self.slider_value_label.configure(text=int(value))
+
 
 
 # define main window
@@ -145,8 +165,32 @@ class App(ctk.CTk):
         self.country_dropdown.place(x=20, y=90)
 
         # create filtering options
+
+        # create frame for filter options
         self.filter_frame = ctk.CTkFrame(self, fg_color=(widget_bg_light, widget_bg_dark), height=500, width=140)
         self.filter_frame.place(x=20, y=130)
+
+        # create title
+        self.filter_title = ctk.CTkLabel(self.filter_frame, text="Filter Options", font=("Helvetica Bold", 18))
+        self.filter_title.place(x=10, y=5)
+
+        # create subtitle "from:"
+        self.year_from = ctk.CTkLabel(self.filter_frame, text="from:", font=("Helvetica Bold", 12))
+        self.year_from.place(x=10, y=38)
+
+        # create slider to input from
+        self.year_lower_limit = Sliders(self.filter_frame, steps=6, width=120, start=2015, end=2021, text="2018",
+                                        color_right=light_grey, color_left="#4B4D50")
+        self.year_lower_limit.place(x=10, y=70)
+
+        # create subtitle "to:"
+        self.year_from = ctk.CTkLabel(self.filter_frame, text="to:", font=("Helvetica Bold", 12))
+        self.year_from.place(x=10, y=110)
+
+        # create slider to input to
+        self.year_upper_limit = Sliders(self.filter_frame, steps=6, width=120, start=2015, end=2021, text="2018",
+                                        color_right=dark_grey, color_left=light_grey)
+        self.year_upper_limit.place(x=10, y=142)
 
         # design the general information frame
         self.country_title = ctk.CTkLabel(self, text="", font=("Helvetica Bold", 24))  # create label for country name
