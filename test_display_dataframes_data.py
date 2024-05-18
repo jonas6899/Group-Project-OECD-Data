@@ -2,35 +2,66 @@ from matplotlib.figure import Figure
 import pandas as pd
 import numpy as np
 
-# create dataframe from .csv files and set index to REF_AREA
-master_df = pd.read_csv("Data/HC_Market.csv").set_index("REF_AREA")
-print("df created")
-
-def display_data():
-
-    # define columns
-    columns_list = ["TIME_PERIOD", "HC0"]
-    print(columns_list)
-
-    # define country
-    graph_index_store = "AUS"  # define g1_index_store as AUS, as we do not have a dropdown here
-    print("graph_index set as AUS")
-
-    # create data frame
-    health_care_data = master_df.loc[graph_index_store][columns_list] # get health care data from dataframe
-    print("health care data accessed!")
-
-    # create plot
-    fig = Figure(figsize = (4.5,4), facecolor="#FFFFFF")
+def display_data(data, plottype, selectedcountry, selectedtimestart=2015, selectedtimeend=2023):
+    # filter data 
+    data = data[data.index.values == selectedcountry] # filter country
+    data = data[data.TIME_PERIOD <= selectedtimeend] # filter end year
+    data = data[data.TIME_PERIOD >= selectedtimestart] # filter end year
+    
+    # Create plot
+    fig = Figure(figsize=(10, 6), facecolor="#FFFFFF")
     ax = fig.add_subplot()
-    ax.set_facecolor("#C2C2C2")
-    ax.fill_between(x=health_care_data["TIME_PERIOD"], y1=health_care_data["HC0"], y2=0, color="#137C4C")
+    
+    colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
+    
+    categories = ["HC0", "HC1HC2", "HC511_x", "HC3", "HC4", "HC512_x", "HC513", "HC52"]
+    for i, category in enumerate(categories):
+        if plottype == "line":
+            ax.plot(data["TIME_PERIOD"], data[category], label=category, color=colors[i])
+        elif plottype == "scatter":
+            ax.scatter(data["TIME_PERIOD"], data[category], label=category, color=colors[i])
+        elif plottype == "bar":
+            ax.bar(data["TIME_PERIOD"] + i * 0.1, data[category], label=category, width=0.1, color=colors[i])
+    
     ax.tick_params(labelsize=10, labelcolor="black")
     ax.set_title("Health Care Cost Over Time", color="black")
     ax.set_xlabel("Year", color="black")
     ax.set_ylabel("Health Care Cost", color="black")
-
+    ax.legend(title="Categories")
+    
     return fig
 
 
-# display_data()
+
+# %% display this data here
+
+
+# create dataframe from .csv files and set index to REF_AREA
+master_df = pd.read_csv("Data/HC_Market.csv").set_index("REF_AREA")
+print("df created")
+
+# define parameters
+plottype = "scatter"
+selectedcountry = "CHE"
+selectedtimestart = 2015
+selectedtimeend = 2020
+
+
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+
+# Call the function
+fig = display_data(master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+
+# Display the figure
+canvas = FigureCanvas(fig)
+canvas.draw()
+
+plt.figure(figsize=(10, 6))
+plt.imshow(canvas.buffer_rgba())
+plt.axis('off')
+plt.show()
+
+
+print(fig)
+plt.fig
