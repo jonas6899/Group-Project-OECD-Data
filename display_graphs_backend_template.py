@@ -41,6 +41,8 @@ def display_data(facecolor, labelcolor, data, plottype, selectedcountry, selecte
             ax.scatter(data["TIME_PERIOD"], data[category], label=legend_mapping[category], color=colors[i])
         elif plottype == "bar":
             ax.bar(data["TIME_PERIOD"] + i * 0.1, data[category], label=legend_mapping[category], width=0.1, color=colors[i])
+        else:
+            raise ValueError
             
     # Set x-axis to only show integers
     from matplotlib.ticker import MaxNLocator
