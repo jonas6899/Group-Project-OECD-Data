@@ -4,9 +4,9 @@ oecd_countries = [
     "Costa Rica", "Denmark", "Estonia", "Finland",
     "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland",
     "Israel", "Italy", "Japan", "Korea", "Latvia", "Lithuania",
-    "Luxembourg", "Mexico", "Netherlands", "New Zealand", "Norway",
+    "Luxembourg", "Mexico", "Netherlands", "Norway",
     "Poland", "Portugal", "Slovak Republic", "Slovenia", "Spain",
-    "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States"
+    "Sweden", "Switzerland", "United Kingdom", "United States"
 ]
 
 countries_for_country_select = [
@@ -45,7 +45,6 @@ oecd_images = {
     "luxembourg": "Images/Europe/Luxembourg.png",
     "mexico": "Images/Mexico.png",
     "netherlands": "Images/Europe/Netherlands.png",
-    "new zealand": "Images/New_Zealand.png",
     "norway": "Images/Europe/Norway.png",
     "poland": "Images/Europe/Poland.png",
     "portugal": "Images/Europe/Portugal.png",
@@ -54,7 +53,6 @@ oecd_images = {
     "spain": "Images/Europe/Spain.png",
     "sweden": "Images/Europe/Sweden.png",
     "switzerland": "Images/Europe/Switzerland.png",
-    "turkey": "Images/Europe/Turkey.png",
     "united kingdom": "Images/Europe/United_Kingdom.png",
     "united states": "Images/United_States.png"
 }
@@ -83,7 +81,6 @@ oecd_iso_access = {
         "Lithuania": "LTU",
         "Luxembourg": "LUX",
         "Mexico": "MEX",
-        "New Zealand": "NZL",
         "Netherlands": "NLD",
         "Norway": "NOR",
         "Austria": "AUT",
@@ -94,7 +91,6 @@ oecd_iso_access = {
         "Slovak Republic": "SVK",
         "Slovenia": "SVN",
         "Spain": "ESP",
-    "Turkey": "TUR",
     "Hungary": "HUN",
     "United Kingdom": "GBR",
     "United States": "USA"
