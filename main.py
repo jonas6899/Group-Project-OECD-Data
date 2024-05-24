@@ -33,70 +33,71 @@ dark_grey = "#343638"
 # list of necessary files
 file_paths = ["Data/Doctors_Region.csv", "Data/HC_Market.csv", "Data/HC_Market_meaning.csv"]
 
+
 # check if all files exist
 if not all(os.path.exists(file_path) for file_path in file_paths):
+    def refresh_data():
+        class Root(ctk.CTk):  # create window for progress bar
+            def __init__(self):
+                super().__init__()
 
-    class Root(ctk.CTk):  # create window for progress bar
-        def __init__(self):
-            super().__init__()
+                # set title and geometry of root
+                self.title("App Name")
+                self.geometry("400x200")
 
-            # set title and geometry of root
-            self.title("App Name")
-            self.geometry("400x200")
+                # create descriptive label
+                self.csv_download_label = ctk.CTkLabel(self, text="Downloading data...", font=("Helvetica Bold", 18))
+                self.csv_download_label.pack(pady=30)
 
-            # create descriptive label
-            self.csv_download_label = ctk.CTkLabel(self, text="Downloading data...", font=("Helvetica Bold", 18))
-            self.csv_download_label.pack(pady=30)
+                # create progress bar
+                self.csv_pb = ctk.CTkProgressBar(self, width=250, progress_color=main_color)
+                self.csv_pb.pack(pady=10)
+                self.csv_pb.set(0)
 
-            # create progress bar
-            self.csv_pb = ctk.CTkProgressBar(self, width=250, progress_color=main_color)
-            self.csv_pb.pack(pady=10)
-            self.csv_pb.set(0)
+                # create progress label
+                self.csv_progress_label = ctk.CTkLabel(self, text="", font=("Helvetica", 12))
+                self.csv_progress_label.pack(pady=30)
 
-            # create progress label
-            self.csv_progress_label = ctk.CTkLabel(self, text="", font=("Helvetica", 12))
-            self.csv_progress_label.pack(pady=30)
+                # start the download process
+                self.after(100, self.start_download)  # add some time for gui to initialize
 
-            # start the download process
-            self.after(100, self.start_download)  # add some time for gui to initialize
+            def start_download(self):  # set up labels and progress bar to start importing
+                self.csv_progress_label.configure(text="Importing module...")
+                self.csv_pb.set(0)
+                self.after(100, self.import_module)  # continue with next function
 
-        def start_download(self):  # set up labels and progress bar to start importing
-            self.csv_progress_label.configure(text="Importing module...")
-            self.csv_pb.set(0)
-            self.after(100, self.import_module)  # continue with next function
+            def import_module(self):  # import the necessary functions to load data
+                global load_basic_oecd_data, load_oecd_med_data
+                module = importlib.import_module('total_data')
+                load_basic_oecd_data = module.load_basic_oecd_data
+                load_oecd_med_data = module.load_oecd_med_data
+                self.csv_progress_label.configure(text="Loading basic OECD data...")
+                self.csv_pb.set(0.33)
+                self.after(500, self.load_basic_data)  # Wait 0.5 second before next step
 
-        def import_module(self):  # import the necessary functions to load data
-            global load_basic_oecd_data, load_oecd_med_data
-            module = importlib.import_module('total_data')
-            load_basic_oecd_data = module.load_basic_oecd_data
-            load_oecd_med_data = module.load_oecd_med_data
-            self.csv_progress_label.configure(text="Loading basic OECD data...")
-            self.csv_pb.set(0.33)
-            self.after(500, self.load_basic_data)  # Wait 0.5 second before next step
+            def load_basic_data(self):  # load in basic oecd data
+                self.csv_progress_label.configure(text="Loading med OECD data...")
+                load_basic_oecd_data()
+                self.csv_pb.set(0.66)
+                self.after(500, self.load_med_data)  # Wait 0.5 second before next step
 
-        def load_basic_data(self):  # load in basic oecd data
-            self.csv_progress_label.configure(text="Loading med OECD data...")
-            load_basic_oecd_data()
-            self.csv_pb.set(0.66)
-            self.after(500, self.load_med_data)  # Wait 0.5 second before next step
+            def load_med_data(self):  # load in med data
+                load_oecd_med_data()
+                self.csv_pb.set(1.0)  # set progress to 100% when finished
+                self.csv_download_label.configure(text="Download finished. Main app initializing...",
+                                                font=("Helvetica Bold", 16))
+                self.csv_progress_label.configure(text="Loading data finished.")
+                self.after(3000,
+                        self.close_window)  # Wait 5 second before closing to give time to read further instructions
 
-        def load_med_data(self):  # load in med data
-            load_oecd_med_data()
-            self.csv_pb.set(1.0)  # set progress to 100% when finished
-            self.csv_download_label.configure(text="Download finished. Main app initializing...",
-                                              font=("Helvetica Bold", 16))
-            self.csv_progress_label.configure(text="Loading data finished.")
-            self.after(3000,
-                       self.close_window)  # Wait 5 second before closing to give time to read further instructions
-
-        def close_window(self):
-            self.destroy()
-            print("All necessary files created.")
+            def close_window(self):
+                self.destroy()
+                print("All necessary files created.")
 
 
-    root = Root()
-    root.mainloop()
-
+        root = Root()
+        root.mainloop()
+    refresh_data()
 else:
     print("All necessary files in directory.")
 
@@ -183,6 +184,8 @@ class MessageWindow(ctk.CTkToplevel):
 # define main window
 
 class App(ctk.CTk):
+
+
     def __init__(self):
         super().__init__()
 
@@ -209,6 +212,12 @@ class App(ctk.CTk):
                                        border_color=white, border_width=1, bg_color=main_color, fg_color=main_color,
                                        command=self.change_mode)
         self.darklight.place(x=1185, y=35, anchor="center")
+
+        # Update data
+        self.darklight = ctk.CTkButton(self, width=80, text="Refresh Data", text_color=white, font=("Helvetica", 12),
+                                       border_color=white, border_width=1, bg_color=main_color, fg_color=main_color,
+                                       command=self.refresh_data)
+        self.darklight.place(x=1080, y=35, anchor="center")
 
         # country dropdown menu
         self.country_dropdown = ctk.CTkComboBox(self, values=oecd_countries, hover=True, border_color=(widget_bg_light, widget_bg_dark),
@@ -696,6 +705,69 @@ class App(ctk.CTk):
             # update labels in other cases
             self.year_lower_limit.update_label(lower_limit_value)
             self.year_upper_limit.update_label(upper_limit_value)
+
+    def refresh_data(self):
+        class Root(ctk.CTk):  # create window for progress bar
+            def __init__(self):
+                super().__init__()
+
+                # set title and geometry of root
+                self.title("App Name")
+                self.geometry("400x200")
+
+                # create descriptive label
+                self.csv_download_label = ctk.CTkLabel(self, text="Downloading data...", font=("Helvetica Bold", 18))
+                self.csv_download_label.pack(pady=30)
+
+                # create progress bar
+                self.csv_pb = ctk.CTkProgressBar(self, width=250, progress_color=main_color)
+                self.csv_pb.pack(pady=10)
+                self.csv_pb.set(0)
+
+                # create progress label
+                self.csv_progress_label = ctk.CTkLabel(self, text="", font=("Helvetica", 12))
+                self.csv_progress_label.pack(pady=30)
+
+                # start the download process
+                self.after(100, self.start_download)  # add some time for gui to initialize
+
+            def start_download(self):  # set up labels and progress bar to start importing
+                self.csv_progress_label.configure(text="Importing module...")
+                self.csv_pb.set(0)
+                self.after(100, self.import_module)  # continue with next function
+
+            def import_module(self):  # import the necessary functions to load data
+                global load_basic_oecd_data, load_oecd_med_data
+                module = importlib.import_module('total_data')
+                load_basic_oecd_data = module.load_basic_oecd_data
+                load_oecd_med_data = module.load_oecd_med_data
+                self.csv_progress_label.configure(text="Loading basic OECD data...")
+                self.csv_pb.set(0.33)
+                self.after(500, self.load_basic_data)  # Wait 0.5 second before next step
+
+            def load_basic_data(self):  # load in basic oecd data
+                self.csv_progress_label.configure(text="Loading med OECD data...")
+                load_basic_oecd_data()
+                self.csv_pb.set(0.66)
+                self.after(500, self.load_med_data)  # Wait 0.5 second before next step
+
+            def load_med_data(self):  # load in med data
+                load_oecd_med_data()
+                self.csv_pb.set(1.0)  # set progress to 100% when finished
+                self.csv_download_label.configure(text="Download finished. Main app initializing...",
+                                                font=("Helvetica Bold", 16))
+                self.csv_progress_label.configure(text="Loading data finished.")
+                self.after(3000,
+                        self.close_window)  # Wait 5 second before closing to give time to read further instructions
+
+            def close_window(self):
+                self.destroy()
+                print("All necessary files created.")
+
+
+        root = Root()
+        root.mainloop()
+    
 
     def change_mode(self):
         global mode
