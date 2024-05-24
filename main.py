@@ -1,4 +1,4 @@
-# main window starts on line XXX
+# code for main window starts on line 193
 # make sure to pip install all necessary libraries from the requirements.txt by using pip install -r requirements.txt
 
 # import necessary libraries
@@ -9,10 +9,11 @@ import os
 import importlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from oecd_countries import oecd_countries, oecd_images, oecd_iso_access, cross_country_graphs, countries_for_country_select
-from display_data_functions import display_data_1, display_data_2, display_data_3, display_data_4, display_data_5, display_data_6, display_data_7, display_data_8
+from oecd_countries import oecd_countries, oecd_images, oecd_iso_access, cross_country_graphs, \
+    countries_for_country_select
+from display_data_functions import display_data_1, display_data_2, display_data_3, display_data_4, display_data_5, \
+    display_data_6, display_data_7, display_data_8
 from countryselect import CountrySelect, selected_countries
-
 
 # define styles and colors
 ctk.set_appearance_mode("dark")  # sets mode to either light, dark or system settings
@@ -32,7 +33,6 @@ dark_grey = "#343638"
 
 # list of necessary files
 file_paths = ["Data/Doctors_Region.csv", "Data/HC_Market.csv", "Data/HC_Market_meaning.csv"]
-
 
 # check if all files exist
 if not all(os.path.exists(file_path) for file_path in file_paths):
@@ -85,10 +85,10 @@ if not all(os.path.exists(file_path) for file_path in file_paths):
                 load_oecd_med_data()
                 self.csv_pb.set(1.0)  # set progress to 100% when finished
                 self.csv_download_label.configure(text="Download finished. Main app initializing...",
-                                                font=("Helvetica Bold", 16))
+                                                  font=("Helvetica Bold", 16))
                 self.csv_progress_label.configure(text="Loading data finished.")
                 self.after(3000,
-                        self.close_window)  # Wait 5 second before closing to give time to read further instructions
+                           self.close_window)  # Wait 5 second before closing to give time to read further instructions
 
             def close_window(self):
                 self.destroy()
@@ -96,6 +96,8 @@ if not all(os.path.exists(file_path) for file_path in file_paths):
 
         root = Root()
         root.mainloop()
+
+
     refresh_data()
 else:
     print("All necessary files in directory.")
@@ -110,7 +112,8 @@ class SubFrame(ctk.CTkFrame):
         # set default values for geometry and layout
         super().__init__(master, width=170, height=80, corner_radius=15, fg_color=secondary_color, **kwargs)
         # create label to label data displayed
-        self.gi_datalabel = ctk.CTkLabel(self, text=text, font=("Helvetica Bold", 16), fg_color="transparent", text_color=white)
+        self.gi_datalabel = ctk.CTkLabel(self, text=text, font=("Helvetica Bold", 16), fg_color="transparent",
+                                         text_color=white)
         self.gi_datalabel.place(x=85, y=10, anchor="n")
         self.pack_propagate(False)  # stop the frame from resizing to fit the label
 
@@ -123,10 +126,12 @@ class SubFrame(ctk.CTkFrame):
         self.text2 = new_data
         self.gi_data.configure(text=self.text2)
 
+
 # create frame class for cool sliders with labels
 class Sliders(ctk.CTkFrame):
     def __init__(self, master, steps, width, start, end, color_right, color_left, default_value=None, command=None):
         super().__init__(master, fg_color="transparent")
+
         # Internal function to handle slider value changes
         def slider_command(value):
             # Call the external command if it exists
@@ -135,9 +140,11 @@ class Sliders(ctk.CTkFrame):
             # Update the label with the new value
             else:
                 self.update_label(value)
+
         # Create a slider
-        self.slider = ctk.CTkSlider(self, width=width, number_of_steps=steps, from_=start, to=end, button_color=secondary_color,
-                         button_hover_color=main_color, fg_color=(color_left, color_right),
+        self.slider = ctk.CTkSlider(self, width=width, number_of_steps=steps, from_=start, to=end,
+                                    button_color=secondary_color,
+                                    button_hover_color=main_color, fg_color=(color_left, color_right),
                                     progress_color=(color_right, color_left), command=slider_command)
         self.slider.pack()  # display slider
 
@@ -172,7 +179,8 @@ class MessageWindow(ctk.CTkToplevel):
         self.message_window_label = ctk.CTkLabel(master=self, text=label, font=("Helvetica Bold", 18))
         self.message_window_label.grid(row=0, column=0, padx=30, pady=30, sticky="nw")
 
-        self.textbox = ctk.CTkTextbox(master=self, width=400, height=160, corner_radius=5, fg_color=window_bg_dark)  # add message in text box
+        self.textbox = ctk.CTkTextbox(master=self, width=400, height=160, corner_radius=5,
+                                      fg_color=window_bg_dark)  # add message in text box
         self.textbox.grid(row=1, column=0, padx=25, sticky="")
         self.textbox.insert("1.0", message)
 
@@ -180,11 +188,9 @@ class MessageWindow(ctk.CTkToplevel):
         self.button.grid(row=2, column=0, pady=10, sticky="")
 
 
-
 # define main window
 
 class App(ctk.CTk):
-
 
     def __init__(self):
         super().__init__()
@@ -197,14 +203,16 @@ class App(ctk.CTk):
         self.geometry("1250x1000")
 
         # header bar
-        self.title_background = ctk.CTkCanvas(self, height=70, bg=main_color, highlightthickness=0)  # sets the background for a title font
+        self.title_background = ctk.CTkCanvas(self, height=70, bg=main_color,
+                                              highlightthickness=0)  # sets the background for a title font
         self.title_background.pack(
             fill="x")  # packs the background onto the main window, with variable width depending on window size
 
         self.title_image = ctk.CTkImage(light_image=Image.open("Images/Logos/Health_Explorer_Label.png"),
                                         dark_image=Image.open("Images/Logos/Health_Explorer_Label.png"),
                                         size=(320, 63))  # title image
-        self.title_image_container = ctk.CTkLabel(self, image=self.title_image, text="", fg_color=main_color)  # container for title image
+        self.title_image_container = ctk.CTkLabel(self, image=self.title_image, text="",
+                                                  fg_color=main_color)  # container for title image
         self.title_image_container.place(x=12, y=35, anchor="w")  # placement of title image
 
         # change from dark to light mode
@@ -220,9 +228,11 @@ class App(ctk.CTk):
         self.darklight.place(x=1080, y=35, anchor="center")
 
         # country dropdown menu
-        self.country_dropdown = ctk.CTkComboBox(self, values=oecd_countries, hover=True, border_color=(widget_bg_light, widget_bg_dark),
-                                           button_color=(widget_bg_light, widget_bg_dark), button_hover_color=main_color,
-                                            command=self.display_country_data)
+        self.country_dropdown = ctk.CTkComboBox(self, values=oecd_countries, hover=True,
+                                                border_color=(widget_bg_light, widget_bg_dark),
+                                                button_color=(widget_bg_light, widget_bg_dark),
+                                                button_hover_color=main_color,
+                                                command=self.display_country_data)
         self.country_dropdown.bind("<Return>", self.display_country_data)
         self.country_dropdown.place(x=20, y=90)
 
@@ -236,14 +246,17 @@ class App(ctk.CTk):
         self.filter_title.place(x=10, y=5)
 
         # create subtitle "Choose graph to update:"
-        self.graph_update_label = ctk.CTkLabel(self.filter_frame, text="Choose graph to update:", font=("Helvetica Bold", 10))
+        self.graph_update_label = ctk.CTkLabel(self.filter_frame, text="Choose graph to update:",
+                                               font=("Helvetica Bold", 10))
         self.graph_update_label.place(x=10, y=38)
 
         # create option menu to choose which graph to update
-        self.graph_update_menu = ctk.CTkOptionMenu(self.filter_frame, values=["Graph 1", "Graph 2", "Graph 3", "Graph 4",
-                                                                              "Graph 5", "Graph 6", "Graph 7", "Graph 8"],
-                                            width=120, hover=True, fg_color=(white, light_grey), button_color=(secondary_color),
-                                            button_hover_color=main_color, text_color=black)
+        self.graph_update_menu = ctk.CTkOptionMenu(self.filter_frame,
+                                                   values=["Graph 1", "Graph 2", "Graph 3", "Graph 4",
+                                                           "Graph 5", "Graph 6", "Graph 7", "Graph 8"],
+                                                   width=120, hover=True, fg_color=(white, light_grey),
+                                                   button_color=(secondary_color),
+                                                   button_hover_color=main_color, text_color=black)
         self.graph_update_menu.place(x=10, y=70)
 
         # create subtitle "from:"
@@ -271,31 +284,38 @@ class App(ctk.CTk):
 
         # create option menu for graph type
         self.graph_type_menu = ctk.CTkOptionMenu(self.filter_frame, values=["Line", "Bar", "Scatter"],
-                                        width=120, hover=True, fg_color=(white, light_grey), button_color=(secondary_color),
-                                            button_hover_color=main_color, text_color=black)
+                                                 width=120, hover=True, fg_color=(white, light_grey),
+                                                 button_color=(secondary_color),
+                                                 button_hover_color=main_color, text_color=black)
         self.graph_type_menu.place(x=10, y=296)
 
         # create option to select countries
-        self.select_country_button = ctk.CTkButton(self.filter_frame, text="Select Country", width=120, hover=True, fg_color=secondary_color, font=("Helvetica Bold", 12), command=self.open_country_selection)
+        self.select_country_button = ctk.CTkButton(self.filter_frame, text="Select Country", width=120, hover=True,
+                                                   fg_color=secondary_color, font=("Helvetica Bold", 12),
+                                                   command=self.open_country_selection)
         self.select_country_button.place(x=10, y=343)
 
         # create button to update graphs
-        self.apply_button = ctk.CTkButton(self.filter_frame, width = 120, fg_color=main_color, hover=True, hover_color=secondary_color,
-                                     text="Apply", text_color=white, font=("Helvetica Bold", 14), command=self.apply_filter)
+        self.apply_button = ctk.CTkButton(self.filter_frame, width=120, fg_color=main_color, hover=True,
+                                          hover_color=secondary_color,
+                                          text="Apply", text_color=white, font=("Helvetica Bold", 14),
+                                          command=self.apply_filter)
         self.apply_button.place(x=70, y=388, anchor="n")
 
         # design the general information frame
         self.country_title = ctk.CTkLabel(self, text="", font=("Helvetica Bold", 24))  # create label for country name
         self.country_title.place(x=185, y=90)
 
-        self.gi_frame = ctk.CTkFrame(self, fg_color=(widget_bg_light, widget_bg_dark), height=120, width=1050)  # create window to display information
+        self.gi_frame = ctk.CTkFrame(self, fg_color=(widget_bg_light, widget_bg_dark), height=120,
+                                     width=1050)  # create window to display information
         self.gi_frame.place(x=180, y=130)
 
         self.dc_label = ctk.CTkLabel(self.gi_frame, text="")  # create label for country image
         self.dc_label.place(x=30, y=20, anchor="nw")
 
         # indicate when the data is from in gi_frame
-        self.dd_label = ctk.CTkLabel(self.gi_frame, text="", font=("Helvetica", 10), text_color=(white, widget_bg_light))
+        self.dd_label = ctk.CTkLabel(self.gi_frame, text="", font=("Helvetica", 10),
+                                     text_color=(white, widget_bg_light))
         self.dd_label.place(x=950, y=-4)
 
         # instanciate subframes to display data
@@ -305,7 +325,7 @@ class App(ctk.CTk):
         self.subframegdp = SubFrame(self.gi_frame, text="GDP (bn $)")  # display GDP
         self.subframegdp.place(x=320, y=20)
 
-        self.subframegdppc = SubFrame(self.gi_frame, text="GDP per Capita ($)") # display GDP per capita
+        self.subframegdppc = SubFrame(self.gi_frame, text="GDP per Capita ($)")  # display GDP per capita
         self.subframegdppc.place(x=500, y=20)
 
         self.subframecurrency = SubFrame(self.gi_frame, text="Currency")  # display currency
@@ -315,7 +335,8 @@ class App(ctk.CTk):
         self.subframelanguages.place(x=860, y=20)
 
         # design the graph frame
-        self.graph_frame = ctk.CTkScrollableFrame(self, height=615, width=1025, fg_color=(widget_bg_light, widget_bg_dark))
+        self.graph_frame = ctk.CTkScrollableFrame(self, height=615, width=1025,
+                                                  fg_color=(widget_bg_light, widget_bg_dark))
         self.graph_frame.place(x=180, y=270)
 
         # configure grid for graph frame (16x1)
@@ -327,6 +348,7 @@ class App(ctk.CTk):
         self.window_gte = None  # initializes graph type error message
         self.window_ncs = None  # initializes no countries selected error message
         self.window_pfne = None  # initializes population_filtered.csv not found error message
+        self.window_ndfe = None # initializes no data for filter settings error message
 
     # define functions to display information
 
@@ -426,7 +448,8 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_1(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+            plot = display_data_1(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
 
             if not hasattr(self, "graph_1_name"):
                 self.graph_1_name = ctk.CTkLabel(self.graph_frame,
@@ -446,6 +469,9 @@ class App(ctk.CTk):
         except ValueError:
             self.open_graph_type_error()
             return
+        except AttributeError:
+            self.open_no_data_filtered_error()
+            return
 
     # display graph 2
     def display_graph_2(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
@@ -462,9 +488,9 @@ class App(ctk.CTk):
             m = str()
             for m in selected_countries:
                 if m in oecd_iso_access:
-                    othercountries.append(oecd_iso_access[m])          
-           
-            # pass different colors depending on mode
+                    othercountries.append(oecd_iso_access[m])
+
+                    # pass different colors depending on mode
             if ctk.get_appearance_mode() == "Light":
                 facecolor = widget_bg_light
             elif ctk.get_appearance_mode() == "Dark":
@@ -480,7 +506,8 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_2(facecolor, labelcolor, master_df, plottype, selectedcountry, othercountries, selectedtimestart, selectedtimeend)
+            plot = display_data_2(facecolor, labelcolor, master_df, plottype, selectedcountry, othercountries,
+                                  selectedtimestart, selectedtimeend)
 
             if not hasattr(self, "graph_2_name"):
                 self.graph_2_name = ctk.CTkLabel(self.graph_frame,
@@ -499,6 +526,9 @@ class App(ctk.CTk):
 
         except ValueError:
             self.open_graph_type_error()
+            return
+        except AttributeError:
+            self.open_no_data_filtered_error()
             return
 
     # display expenditure of prescription vs otc (graph 3)
@@ -529,12 +559,14 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_3(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+            plot = display_data_3(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
 
             # create a UI title for the graph if it does not exist
             if not hasattr(self, "graph_3_name"):
-                self.graph_3_name = ctk.CTkLabel(self.graph_frame, text="Expenditure in Prescription (Rx) vs Over-The-Counter (OTC) Over Time (Graph 3)",
-                                             font=("Helvetica Bold", 24))
+                self.graph_3_name = ctk.CTkLabel(self.graph_frame,
+                                                 text="Expenditure in Prescription (Rx) vs Over-The-Counter (OTC) Over Time (Graph 3)",
+                                                 font=("Helvetica Bold", 24))
                 self.graph_3_name.grid(row=4, column=0, sticky="w", padx=20, pady=20)
 
             # destroy old graph if it exists
@@ -548,6 +580,9 @@ class App(ctk.CTk):
 
         except ValueError:
             self.open_graph_type_error()
+            return
+        except AttributeError:
+            self.open_no_data_filtered_error()
             return
 
     # display health care expenditure per capita (graph 4)
@@ -578,7 +613,8 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_4(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+            plot = display_data_4(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
 
             if not hasattr(self, "graph_4_name"):
                 self.graph_4_name = ctk.CTkLabel(self.graph_frame,
@@ -597,6 +633,9 @@ class App(ctk.CTk):
 
         except ValueError:
             self.open_graph_type_error()
+            return
+        except AttributeError:
+            self.open_no_data_filtered_error()
             return
 
     # display volumes penetration in % of generic drugs (graph 5)
@@ -650,6 +689,9 @@ class App(ctk.CTk):
         except ValueError:
             self.open_graph_type_error()
             return
+        except AttributeError:
+            self.open_no_data_filtered_error()
+            return
 
     # display sales penetration in % of generic drugs
     def display_graph_6(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
@@ -700,6 +742,9 @@ class App(ctk.CTk):
 
         except ValueError:
             self.open_graph_type_error()
+            return
+        except AttributeError:
+            self.open_no_data_filtered_error()
             return
 
     # display absolute per capita values of generic drugs and originator pharmaceutical sales
@@ -758,6 +803,9 @@ class App(ctk.CTk):
         except ValueError:
             self.open_graph_type_error()
             return
+        except AttributeError:
+            self.open_no_data_filtered_error()
+            return
 
     # display healthcare professionals in regions (graph 8)
     def display_graph_8(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
@@ -787,7 +835,8 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_8(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+            plot = display_data_8(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
 
             if not hasattr(self, "graph_8_name"):
                 self.graph_8_name = ctk.CTkLabel(self.graph_frame,
@@ -807,6 +856,9 @@ class App(ctk.CTk):
         except ValueError:
             self.open_graph_type_error()
             return
+        except AttributeError:
+            self.open_no_data_filtered_error()
+            return
 
     # create function to choose countries
     def open_country_selection(self):
@@ -814,13 +866,13 @@ class App(ctk.CTk):
             self.country_selection_window = CountrySelect(self, countries=countries_for_country_select,
                                                           selected_countries=selected_countries)
         self.country_selection_window.lift()  # bring window to the front
-            
+
     # create function for the apply button
     def apply_filter(self):
         self.check_graph_update = self.graph_update_menu.get()  # get value from graph update menu
 
         if self.check_graph_update in cross_country_graphs:  # check whether we need selected countries
-            if not selected_countries: # trigger error if no countries are selected
+            if not selected_countries:  # trigger error if no countries are selected
                 self.open_no_countries_selected_error()
                 return
 
@@ -848,7 +900,7 @@ class App(ctk.CTk):
 
     # create function for lower limit slider stay the lower limit
     def update_upper_limit(self, value):
-    # Get the current values of the sliders
+        # Get the current values of the sliders
         lower_limit_value = self.year_lower_limit.slider.get()
         upper_limit_value = self.year_upper_limit.slider.get()
 
@@ -914,10 +966,10 @@ class App(ctk.CTk):
                 load_oecd_med_data()
                 self.csv_pb.set(1.0)  # set progress to 100% when finished
                 self.csv_download_label.configure(text="Download finished. Main app initializing...",
-                                                font=("Helvetica Bold", 16))
+                                                  font=("Helvetica Bold", 16))
                 self.csv_progress_label.configure(text="Loading data finished.")
                 self.after(3000,
-                        self.close_window)  # Wait 5 second before closing to give time to read further instructions
+                           self.close_window)  # Wait 5 second before closing to give time to read further instructions
 
             def close_window(self):
                 self.destroy()
@@ -925,7 +977,7 @@ class App(ctk.CTk):
 
         root = Root()
         root.mainloop()
-    
+
     # define function that changes light/dark mode
     def change_mode(self):
         global mode
@@ -941,8 +993,9 @@ class App(ctk.CTk):
     # define error messages
     def open_line_graph_error(self):  # is raised when minimum and maximum year are the same and no line can be drawn
         if self.window_lge is None or not self.window_lge.winfo_exists():
-            self.window_lge = MessageWindow(title="Line Graph Error", message="Line graphs cannot be displayed for one year.\n"
-                                                                               "Please choose longer time period.",
+            self.window_lge = MessageWindow(title="Line Graph Error",
+                                            message="Line graphs cannot be displayed for one year.\n"
+                                                    "Please choose longer time period.",
                                             label="Line Graph Error")
             self.window_lge.grab_set()  # make window modal
             self.window_lge.focus_set()  # set focus to window
@@ -955,8 +1008,9 @@ class App(ctk.CTk):
         if self.window_gte is None or not self.window_gte.winfo_exists():
             self.wrong_graphtype = self.graph_type_menu.get().title()
             # create new instance of Message class
-            self.window_gte = MessageWindow(title="Graph Type Error", message=f"The graph type '{self.wrong_graphtype}' is not available for this graph.\n"
-                                                                             f"Please choose a different one.",
+            self.window_gte = MessageWindow(title="Graph Type Error",
+                                            message=f"The graph type '{self.wrong_graphtype}' is not available for this graph.\n"
+                                                    f"Please choose a different one.",
                                             label="Graph Type Error")
             self.window_gte.grab_set()  # make window modal
             self.window_gte.focus_set()  # set focus to window
@@ -965,26 +1019,48 @@ class App(ctk.CTk):
         else:
             self.window_gte.focus_set()
 
-    def open_no_countries_selected_error(self):  # is raised when a graph requires selected countries, but none are selected
+    def open_no_countries_selected_error(
+            self):  # is raised when a graph requires selected countries, but none are selected
         if self.window_ncs is None or not self.window_ncs.winfo_exists():
             # create new instance of Message class
-            self.window_ncs = MessageWindow(title="No Countries Selected Error", message=f"This graph requires selection of countries.\nPlease select countries.",
+            self.window_ncs = MessageWindow(title="No Countries Selected Error",
+                                            message=f"This graph requires selection of countries.\nPlease select countries.",
                                             label="No Countries Selected Error")
             self.window_ncs.grab_set()  # make window modal
             self.window_ncs.focus_set()  # set focus to window
             self.window_ncs.transient(self)  # make window not disappear
             self.window_ncs.wait_window()  # wait until window is closed
+        else:
+            self.window_ncs.focus_set()
 
-    def open_pop_file_does_not_exist_error(self):  # is raised when population_filtered.csv is called that does not exist
+    def open_pop_file_does_not_exist_error(
+            self):  # is raised when population_filtered.csv is called that does not exist
         if self.window_pfne is None or not self.window_pfne.winfo_exists():
             # create new instance of Message class
-            self.window_pfne = MessageWindow(title="Population Data Error", message=f"Graph 7 requires population_filtered.csv."
-                                                                                    f"Please download it from the project github." ,
-                                            label="Population Data Error")
+            self.window_pfne = MessageWindow(title="Population Data Error",
+                                             message=f"Graph 7 requires population_filtered.csv."
+                                                     f"Please download it from the project github.",
+                                             label="Population Data Error")
             self.window_pfne.grab_set()  # make window modal
             self.window_pfne.focus_set()  # set focus to window
             self.window_pfne.transient(self)  # make window not disappear
             self.window_pfne.wait_window()  # wait until window is closed
+        else:
+            self.window_pfne.focus_set()
+
+    def open_no_data_filtered_error(self):  # is raised when filtered option has no data
+        if self.window_ndfe is None or not self.window_ndfe.winfo_exists():
+            # create new instance of Message class
+            self.window_ndfe = MessageWindow(title="No data for filter settings error",
+                                             message=f"There is no data available for your filter settings.\n"
+                                                     f"Please choose different settings.",
+                                             label="No Data for Filter Settings Error")
+            self.window_ndfe.grab_set()  # make window modal
+            self.window_ndfe.focus_set()  # set focus to window
+            self.window_ndfe.transient(self)  # make window not disappear
+            self.window_ndfe.wait_window()  # wait until window is closed
+        else:
+            self.window_ndfe.focus_set()
 
 
 # execute customtkinter
