@@ -1,4 +1,4 @@
-# main code starts on line XXX
+# main window starts on line XXX
 # make sure to pip install all necessary libraries from the requirements.txt by using pip install -r requirements.txt
 
 # import necessary libraries
@@ -10,8 +10,7 @@ import importlib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 from oecd_countries import oecd_countries, oecd_images, oecd_iso_access, cross_country_graphs
-from display_graphs_backend_template import display_data
-from graph_3 import display_data_3
+from display_data_functions import display_data, display_data_3, display_data_4, display_data_5, display_data_6, display_data_7
 from countryselect import CountrySelect, preselected_countries, selected_countries
 
 
@@ -79,7 +78,7 @@ if not all(os.path.exists(file_path) for file_path in file_paths):
             self.csv_progress_label.configure(text="Loading med OECD data...")
             load_basic_oecd_data()
             self.csv_pb.set(0.66)
-            self.after(1000, self.load_med_data)  # Wait 1 second before next step
+            self.after(500, self.load_med_data)  # Wait 0.5 second before next step
 
         def load_med_data(self):  # load in med data
             load_oecd_med_data()
@@ -180,6 +179,7 @@ class MessageWindow(ctk.CTkToplevel):
         self.button.grid(row=2, column=0, pady=10, sticky="")
 
 
+
 # define main window
 
 class App(ctk.CTk):
@@ -219,7 +219,7 @@ class App(ctk.CTk):
 
         # create filtering options
         # create frame for filter options
-        self.filter_frame = ctk.CTkFrame(self, fg_color=(widget_bg_light, widget_bg_dark), height=500, width=140)
+        self.filter_frame = ctk.CTkFrame(self, fg_color=(widget_bg_light, widget_bg_dark), height=430, width=140)
         self.filter_frame.place(x=20, y=130)
 
         # create title for frame
@@ -231,7 +231,8 @@ class App(ctk.CTk):
         self.graph_update_label.place(x=10, y=38)
 
         # create option menu to choose which graph to update
-        self.graph_update_menu = ctk.CTkOptionMenu(self.filter_frame, values=["Graph 1", "Graph 2", "Graph 3", "Graph 4"],
+        self.graph_update_menu = ctk.CTkOptionMenu(self.filter_frame, values=["Graph 1", "Graph 2", "Graph 3", "Graph 4",
+                                                                              "Graph 5", "Graph 6", "Graph 7"],
                                             width=120, hover=True, fg_color=(white, light_grey), button_color=(secondary_color),
                                             button_hover_color=main_color, text_color=black)
         self.graph_update_menu.place(x=10, y=70)
@@ -315,6 +316,8 @@ class App(ctk.CTk):
         # initialize message windows
         self.window_lge = None  # initializes line graph error message
         self.window_gte = None  # initializes graph type error message
+        self.window_ncs = None  # initializes no countries selected error message
+        self.window_pfne = None  # initializes population_filtered.csv not found error message
 
     # define functions to display information
 
@@ -322,6 +325,9 @@ class App(ctk.CTk):
         self.display_general_information()
         self.display_graph_1()
         self.display_graph_3()
+        self.display_graph_5()
+        self.display_graph_6()
+        self.display_graph_7()
 
     def display_general_information(self):
 
@@ -380,7 +386,7 @@ class App(ctk.CTk):
         new_data = self.master_df.loc[gic]["Language"][0]  # get language data from dataframe
         self.subframelanguages.change_gi_data(new_data)  # update gi_data label
 
-    def display_graph_1(self, plottype="scatter", selectedtimestart=2015, selectedtimeend=2022):  # display Expenditure in health care across all areas of care
+    def display_graph_1(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):  # display Expenditure in health care across all areas of care
         print("started creating canvas 1!")  # test print
 
         # check for line graph error
@@ -464,16 +470,179 @@ class App(ctk.CTk):
             if not hasattr(self, "graph_3_name"):
                 self.graph_3_name = ctk.CTkLabel(self.graph_frame, text="Expenditure in Prescription (Rx) vs Over-The-Counter (OTC) Over Time (Graph 3)",
                                              font=("Helvetica Bold", 24))
-                self.graph_3_name.grid(row=2, column=0, sticky="w", padx=20, pady=20)
+                self.graph_3_name.grid(row=4, column=0, sticky="w", padx=20, pady=20)
 
             # destroy old graph if it exists
             if hasattr(self, "canvas3"):
-                self.canvas3.get_tk_widget().destroy
+                self.canvas3.get_tk_widget().destroy()
 
             # Create a canvas widget
             canvas3 = FigureCanvasTkAgg(plot, master=self.graph_frame)
             canvas3.draw()
-            canvas3.get_tk_widget().grid(row=3, column=0, sticky="nsew")
+            canvas3.get_tk_widget().grid(row=5, column=0, sticky="nsew")
+
+        except ValueError:
+            self.open_graph_type_error()
+            return
+
+    # display volumes penetration in % of generic drugs
+    def display_graph_5(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
+        print("started creating canvas 5!")  # test print
+
+        # check for line graph error
+        if plottype == "line" and selectedtimestart == selectedtimeend:
+            self.open_line_graph_error()
+            return
+
+        try:
+            # create variables
+            selectedcountry = oecd_iso_access.get(self.country_dropdown.get().title())
+
+            # pass different colors depending on mode
+            if ctk.get_appearance_mode() == "Light":
+                facecolor = widget_bg_light
+            elif ctk.get_appearance_mode() == "Dark":
+                facecolor = widget_bg_dark
+            else:
+                facecolor = widget_bg_light
+
+            if ctk.get_appearance_mode() == "Light":
+                labelcolor = black
+            elif ctk.get_appearance_mode() == "Dark":
+                labelcolor = white
+            else:
+                labelcolor = black
+
+            # Call the function that returns the Matplotlib plot
+            plot = display_data_5(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
+            print(plot)
+
+            # create a UI title for the graph if there is no title already
+            if not hasattr(self, "graph_5_name"):
+                self.graph_5_name = ctk.CTkLabel(self.graph_frame,
+                                                 text="Generic Penetration in Volume in % (Graph 5)",
+                                                 font=("Helvetica Bold", 24))
+                self.graph_5_name.grid(row=8, column=0, sticky="w", padx=20, pady=20)
+
+            # destroy old graph if it exists
+            if hasattr(self, "canvas5"):
+                self.canvas5.get_tk_widget().destroy()
+
+            # Create a canvas widget
+            canvas5 = FigureCanvasTkAgg(plot, master=self.graph_frame)
+            canvas5.draw()
+            canvas5.get_tk_widget().grid(row=9, column=0, sticky="nsew")
+
+        except ValueError:
+            self.open_graph_type_error()
+            return
+
+    # display sales penetration in % of generic drugs
+    def display_graph_6(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
+        print("started creating canvas 6!")  # test print
+
+        # check for line graph error
+        if plottype == "line" and selectedtimestart == selectedtimeend:
+            self.open_line_graph_error()
+            return
+
+        try:
+            # create variables
+            selectedcountry = oecd_iso_access.get(self.country_dropdown.get().title())
+
+            # pass different colors depending on mode
+            if ctk.get_appearance_mode() == "Light":
+                facecolor = widget_bg_light
+            elif ctk.get_appearance_mode() == "Dark":
+                facecolor = widget_bg_dark
+            else:
+                facecolor = widget_bg_light
+
+            if ctk.get_appearance_mode() == "Light":
+                labelcolor = black
+            elif ctk.get_appearance_mode() == "Dark":
+                labelcolor = white
+            else:
+                labelcolor = black
+
+            # Call the function that returns the Matplotlib plot
+            plot = display_data_6(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
+
+            # create a UI title for the graph if it does not exist
+            if not hasattr(self, "graph_6_name"):
+                self.graph_6_name = ctk.CTkLabel(self.graph_frame,
+                                                 text="Generic Penetration in Value in % (Graph 6)",
+                                                 font=("Helvetica Bold", 24))
+                self.graph_6_name.grid(row=10, column=0, sticky="w", padx=20, pady=20)
+
+            # destroy old graph if it exists
+            if hasattr(self, "canvas6"):
+                self.canvas6.get_tk_widget().destroy()
+
+            # Create a canvas widget
+            canvas6 = FigureCanvasTkAgg(plot, master=self.graph_frame)
+            canvas6.draw()
+            canvas6.get_tk_widget().grid(row=11, column=0, sticky="nsew")
+
+        except ValueError:
+            self.open_graph_type_error()
+            return
+
+    # display absolute per capita values of generic drugs and originator pharmaceutical sales
+    def display_graph_7(self, plottype="line", selectedtimestart=2015, selectedtimeend=2022):
+        print("started creating canvas 7!")  # test print
+
+        # check for line graph error
+        if plottype == "line" and selectedtimestart == selectedtimeend:
+            self.open_line_graph_error()
+            return
+
+        # check for missing file error
+        file_path = "Data/population_filtered.csv"  # define file path
+        if not os.path.isfile(file_path):  # raise error if it does not exist
+            self.open_pop_file_does_not_exist_error()
+            return
+
+        try:  # try except structure to catch wrong plot type value error
+            # create variables
+            selectedcountry = oecd_iso_access.get(self.country_dropdown.get().title())
+
+            # pass different colors depending on mode
+            if ctk.get_appearance_mode() == "Light":
+                facecolor = widget_bg_light
+            elif ctk.get_appearance_mode() == "Dark":
+                facecolor = widget_bg_dark
+            else:
+                facecolor = widget_bg_light
+
+            if ctk.get_appearance_mode() == "Light":
+                labelcolor = black
+            elif ctk.get_appearance_mode() == "Dark":
+                labelcolor = white
+            else:
+                labelcolor = black
+
+            # Call the function that returns the Matplotlib plot
+            plot = display_data_7(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart,
+                                  selectedtimeend)
+
+            # create a UI title for the graph if it does not exist
+            if not hasattr(self, "graph_7_name"):
+                self.graph_7_name = ctk.CTkLabel(self.graph_frame,
+                                                 text="Generic Spend Per Capita in $ (Graph 7)",
+                                                 font=("Helvetica Bold", 24))
+                self.graph_7_name.grid(row=12, column=0, sticky="w", padx=20, pady=20)
+
+            # destroy old graph if it exists
+            if hasattr(self, "canvas7"):
+                self.canvas7.get_tk_widget().destroy()
+
+            # Create a canvas widget
+            canvas7 = FigureCanvasTkAgg(plot, master=self.graph_frame)
+            canvas7.draw()
+            canvas7.get_tk_widget().grid(row=13, column=0, sticky="nsew")
 
         except ValueError:
             self.open_graph_type_error()
@@ -499,6 +668,9 @@ class App(ctk.CTk):
         graph2function = {
             "Graph 1": self.display_graph_1,
             "Graph 3": self.display_graph_3,
+            "Graph 5": self.display_graph_5,
+            "Graph 6": self.display_graph_6,
+            "Graph 7": self.display_graph_7
         }
 
         # Get the correct function reference from the dictionary
@@ -572,6 +744,17 @@ class App(ctk.CTk):
             self.window_ncs.focus_set()  # set focus to window
             self.window_ncs.transient(self)  # make window not disappear
             self.window_ncs.wait_window()  # wait until window is closed
+
+    def open_pop_file_does_not_exist_error(self):  # is raised when population_filtered.csv is called that does not exist
+        if self.window_pfne is None or not self.window_pfne.winfo_exists():
+            # create new instance of Message class
+            self.window_pfne = MessageWindow(title="Population Data Error", message=f"Graph 7 requires population_filtered.csv."
+                                                                                    f"Please download it from the project github." ,
+                                            label="Population Data Error")
+            self.window_pfne.grab_set()  # make window modal
+            self.window_pfne.focus_set()  # set focus to window
+            self.window_pfne.transient(self)  # make window not disappear
+            self.window_pfne.wait_window()  # wait until window is closed
 
 
 # execute customtkinter
