@@ -42,7 +42,7 @@ if not all(os.path.exists(file_path) for file_path in file_paths):
                 super().__init__()
 
                 # set title and geometry of root
-                self.title("App Name")
+                self.title("Downloading data...")
                 self.geometry("400x200")
 
                 # create descriptive label
@@ -193,7 +193,7 @@ class App(ctk.CTk):
         self.master_df = master_df
 
         # window title and size
-        self.title("App Name")
+        self.title("Health Explorer")
         self.geometry("1250x1000")
 
         # header bar
@@ -458,6 +458,7 @@ class App(ctk.CTk):
         try:
             # create variables
             selectedcountry = oecd_iso_access.get(self.country_dropdown.get().title())
+            othercountries = selected_countries
 
             # pass different colors depending on mode
             if ctk.get_appearance_mode() == "Light":
@@ -475,7 +476,7 @@ class App(ctk.CTk):
                 labelcolor = black
 
             # Call the function that returns the Matplotlib plot
-            plot = display_data_2(facecolor, labelcolor, master_df, plottype, selectedcountry, selectedtimestart, selectedtimeend)
+            plot = display_data_2(facecolor, labelcolor, master_df, plottype, othercountries, selectedtimestart, selectedtimeend)
 
             if not hasattr(self, "graph_2_name"):
                 self.graph_2_name = ctk.CTkLabel(self.graph_frame,
