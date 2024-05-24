@@ -100,7 +100,6 @@ def display_data_2(facecolor, labelcolor, data, plottype, selectedcountry, other
     othercountries = np.append(othercountries, selectedcountry)  # get list of all countries
     data = data[np.isin(data.index.values, othercountries)]  # filter the specified countries
     data = data[(data.TIME_PERIOD <= selectedtimeend) & (data.TIME_PERIOD >= selectedtimestart)]  # filter years
-    print(othercountries)
 
     # remove the doubled columns
     del data["HC511_y"]
