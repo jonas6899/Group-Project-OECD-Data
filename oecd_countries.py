@@ -9,6 +9,20 @@ oecd_countries = [
     "Sweden", "Switzerland", "Turkey", "United Kingdom", "United States"
 ]
 
+countries_for_country_select = [
+    "Switzerland"
+]
+
+# Add from this list to countries_for_country_select if data of respective country gets added
+
+# "Australia", "Austria", "Belgium", "Canada", "Chile", "Colombia",
+# "Costa Rica", "Czech Republic", "Denmark", "Estonia", "Finland",
+# "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland",
+# "Israel", "Italy", "Japan", "Korea", "Latvia", "Lithuania",
+# "Luxembourg", "Mexico", "Netherlands", "New Zealand", "Norway",
+# "Poland", "Portugal", "Slovak Republic", "Slovenia", "Spain",
+# "Sweden", "Turkey", "United Kingdom", "United States"
+
 # dictionary that assigns an image to each country
 
 oecd_images = {
@@ -96,4 +110,4 @@ oecd_iso_access = {
 
 
 # all graphs that compare multiple countries
-cross_country_graphs = ["Graph 2", "Graph 4", "Graph 5", "Graph 6", "Graph 7", "Graph 8"]
+cross_country_graphs = ["Graph 2"]
