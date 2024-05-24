@@ -1,7 +1,9 @@
 from matplotlib.figure import Figure
+import matplotlib.pyplot as plt
 import pandas as pd
 from matplotlib.ticker import MaxNLocator, FuncFormatter, PercentFormatter
 import textwrap
+import numpy as np
 
 def wrap_text(text, width):  # wrap text of long legends
     wrapped_lines = textwrap.wrap(text, width=width, break_long_words=False, replace_whitespace=False)
@@ -67,6 +69,7 @@ def display_data_1(facecolor, labelcolor, data, plottype, selectedcountry, selec
         for i, category in enumerate(categories):
             if plottype == "line":
                 ax.plot(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 20), color=colors[i])
+                print("line graph printed")
             elif plottype == "scatter":
                 ax.scatter(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 20), color=colors[i])
             elif plottype == "bar":
@@ -136,6 +139,26 @@ def display_data_2(facecolor, labelcolor, data, plottype, selectedcountry, other
                 ax.bar(data[data.REF_AREA == country]["TIME_PERIOD"] + i * 0.1, data[data.REF_AREA == country]["TOTAL_HC_EXP"], label=country, width=0.1, color=colors[i])
             else:
                 raise ValueError("Unsupported plot type")
+
+        # Set x-axis to only show integers
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+        ax.tick_params(labelsize=10, labelcolor=labelcolor)
+        ax.set_title("Total Health Care Expenditure Over Time", color=labelcolor)
+        ax.set_xlabel("Year", color=labelcolor)
+        ax.set_ylabel("Health Care Expenditure", color=labelcolor)
+
+        # Apply custom formatter to y-axis to display bn
+        ax.yaxis.set_major_formatter(FuncFormatter(currency_formatter))
+
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Countries", loc='center left', bbox_to_anchor=(1, 0.5))
+        legend.get_title().set_fontsize('12')  # Optional: set the title font size
+
+        return fig
         
 # display data for graph 3
 def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selectedtimestart=2015, selectedtimeend=2023):
@@ -199,7 +222,7 @@ def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selec
 
     return fig
 
-# display data for graph 4 (inactive)
+# display data for graph 4
 def display_data_4(facecolor, labelcolor, data, plottype, selectedcountry, selectedtimestart=2015, selectedtimeend=2023):
     # filter data
     data = data[data.index.values == selectedcountry]  # filter country
@@ -519,7 +542,7 @@ def display_data_8(facecolor, labelcolor, data, plottype, selectedcountry, selec
     ax.tick_params(labelsize=10, labelcolor=labelcolor, labelfontfamily="Helvetica")
     ax.set_title("Healthcare professionals in regions", color=labelcolor, fontname="Helvetica")
     ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
-    ax.set_ylabel("Nuber of healthcare professionals", color=labelcolor, fontname="Helvetica")
+    ax.set_ylabel("Number of healthcare professionals", color=labelcolor, fontname="Helvetica")
 
     # adjust layout to make room for legend
     fig.subplots_adjust(right=0.7)
