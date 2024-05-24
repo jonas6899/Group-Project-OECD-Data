@@ -1,7 +1,7 @@
 import customtkinter as ctk
 
 # all countries selected with checkmarks
-selected_countries = ["Switzerland"]
+selected_countries = ["Switzerland", "Australia", "Canada", "Chile", "Costa Rica", "Czech Republic", "Finland", "Poland", "United Kingdom"]
 
 class CountrySelect(ctk.CTkToplevel):
     def __init__(self, master=None, countries=[], selected_countries=[]):
