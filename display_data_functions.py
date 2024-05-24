@@ -40,9 +40,6 @@ def display_data_1(facecolor, labelcolor, data, plottype, selectedcountry, selec
     data = data[data.index.values == selectedcountry]  # filter country
     data = data[(data.TIME_PERIOD <= selectedtimeend) & (data.TIME_PERIOD >= selectedtimestart)]  # filter years
 
-    if len(data) == 0:
-        return "NO DATA"
-
     # remove the doubled columns
     del data["HC511_y"]
     del data["HC512_y"]
@@ -61,7 +58,7 @@ def display_data_1(facecolor, labelcolor, data, plottype, selectedcountry, selec
     colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
 
     categories = ["HC0", "HC1HC2", "HC511", "HC3", "HC4", "HC512", "HC513", "HC52"]
-    if data.empty:
+    if data[categories].isnull().all().all():  # show no data available if there is no data available
         fig, ax = plt.subplots()
         ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
         ax.set_axis_off()
@@ -69,13 +66,20 @@ def display_data_1(facecolor, labelcolor, data, plottype, selectedcountry, selec
         for i, category in enumerate(categories):
             if plottype == "line":
                 ax.plot(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 20), color=colors[i])
-                print("line graph printed")
             elif plottype == "scatter":
                 ax.scatter(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 20), color=colors[i])
             elif plottype == "bar":
                 ax.bar(data["TIME_PERIOD"] + i * 0.1, data[category], label=wrap_text(legend_mapping[category], 20), width=0.1, color=colors[i])
             else:
                 raise ValueError("Unsupported plot type")
+
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
 
     # Set x-axis to only show integers
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -88,22 +92,15 @@ def display_data_1(facecolor, labelcolor, data, plottype, selectedcountry, selec
     # Apply custom formatter to y-axis to display bn
     ax.yaxis.set_major_formatter(FuncFormatter(currency_formatter))
 
-    # Adjust the layout to make room for the legend
-    fig.subplots_adjust(right=0.75)
-
-    # Position the legend outside the plot area with Helvetica font
-    legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-    legend.get_title().set_fontsize('12')  # Optional: set the title font size
-    legend.get_title().set_fontname('Helvetica')  # Optional: set the title font family
-
     return fig
 
 # display data for graph 2
 def display_data_2(facecolor, labelcolor, data, plottype, selectedcountry, othercountries, selectedtimestart=2015, selectedtimeend=2023):
     # filter data
-    othercountries = np.append(othercountries, selectedcountry) # get list of all countries
-    data = data[np.isin(data.index.values,othercountries)]  # filter the specified countries
+    othercountries = np.append(othercountries, selectedcountry)  # get list of all countries
+    data = data[np.isin(data.index.values, othercountries)]  # filter the specified countries
     data = data[(data.TIME_PERIOD <= selectedtimeend) & (data.TIME_PERIOD >= selectedtimestart)]  # filter years
+    print(othercountries)
 
     # remove the doubled columns
     del data["HC511_y"]
@@ -166,10 +163,6 @@ def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selec
     data = data[data.index.values == selectedcountry]  # filter country
     data = data[(data.TIME_PERIOD <= selectedtimeend) & (data.TIME_PERIOD >= selectedtimestart)]  # filter years
 
-    if len(data) == 0:
-        print("no data")
-        return "NO DATA"
-
     # remove the doubled columns
     data.rename(columns={"HC511_x": "HC511", "HC512_x": "HC512"}, inplace=True)
 
@@ -186,7 +179,7 @@ def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selec
     colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
 
     categories = ["HC511", "HC512"]
-    if data.empty:
+    if data[categories].isnull().all().all():  # show no data available if there is no data available
         fig, ax = plt.subplots()
         ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
         ax.set_axis_off()
@@ -201,6 +194,14 @@ def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selec
             else:
                 raise ValueError("Unsupported plot type")
 
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
+
     # Set x-axis to only show integers
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
@@ -212,14 +213,6 @@ def display_data_3(facecolor, labelcolor, data, plottype, selectedcountry, selec
     # Apply custom formatter to y-axis to display bn
     ax.yaxis.set_major_formatter(FuncFormatter(currency_formatter))
 
-    # Adjust the layout to make room for the legend
-    fig.subplots_adjust(right=0.75)
-
-    # Position the legend outside the plot area with Helvetica font
-    legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-    legend.get_title().set_fontsize('12')  # set the title font size
-    legend.get_title().set_fontname('Helvetica')  # set the title font family
-
     return fig
 
 # display data for graph 4
@@ -227,10 +220,6 @@ def display_data_4(facecolor, labelcolor, data, plottype, selectedcountry, selec
     # filter data
     data = data[data.index.values == selectedcountry]  # filter country
     data = data[(data.TIME_PERIOD <= selectedtimeend) & (data.TIME_PERIOD >= selectedtimestart)]  # filter years
-
-    if len(data) == 0:
-        print("no data")
-        return "NO DATA"
 
     # remove the doubled columns
     data.rename(columns={"HC511_x": "HC511", "HC512_x": "HC512"}, inplace=True)
@@ -258,7 +247,7 @@ def display_data_4(facecolor, labelcolor, data, plottype, selectedcountry, selec
     colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
 
     categories = ["HC511", "HC512"]
-    if data.empty:
+    if data[categories].isnull().all().all():  # show no data available if there is no data available
         fig, ax = plt.subplots()
         ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
         ax.set_axis_off()
@@ -273,6 +262,14 @@ def display_data_4(facecolor, labelcolor, data, plottype, selectedcountry, selec
             else:
                 raise ValueError("Unsupported plot type")
 
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
+
     # Set x-axis to only show integers
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
@@ -280,14 +277,6 @@ def display_data_4(facecolor, labelcolor, data, plottype, selectedcountry, selec
     ax.set_title("Expenditure Prescription vs OTC Over Time", color=labelcolor, fontname="Helvetica")
     ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
     ax.set_ylabel("Expenditure per capita (in $)", color=labelcolor, fontname="Helvetica")
-
-    # Adjust the layout to make room for the legend
-    fig.subplots_adjust(right=0.75)
-
-    # Position the legend outside the plot area with Helvetica font
-    legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-    legend.get_title().set_fontsize('12')  # set the title font size
-    legend.get_title().set_fontname('Helvetica')  # set the title font family
 
     return fig
 
@@ -298,74 +287,6 @@ def display_data_5(facecolor, labelcolor, data, plottype, selectedcountry, selec
     data = data[data.index.values == selectedcountry]  # filter country
     data = data[data.TIME_PERIOD <= selectedtimeend]  # filter end year
     data = data[data.TIME_PERIOD >= selectedtimestart]  # filter end year
-
-    if len(data) == 0:
-        print("no data")
-        fig = "NO DATA"
-        return fig
-
-    else:
-        # import legend
-        legendnames = pd.read_csv("Data/HC_Market_meaning.csv")
-
-        # Create a dictionary mapping categories to their explanations
-        legend_mapping = dict(zip(legendnames["Column name"], legendnames["Meaning"]))
-
-        # Create plot
-        fig = Figure(figsize=(8, 4), facecolor=facecolor)
-        ax = fig.add_subplot()
-
-        colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
-
-        categories = ["PT_SL_VOL_M"]
-        if data.empty:
-            fig, ax = plt.subplots()
-            ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
-            ax.set_axis_off()
-        else:
-            for i, category in enumerate(categories):
-                data[category] = data[category] * 100  # Convert to percentage
-                if plottype == "line":
-                    ax.plot(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 15), color=colors[i])
-                elif plottype == "scatter":
-                    ax.scatter(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 15),
-                               color=colors[i])
-                elif plottype == "bar":
-                    ax.bar(data["TIME_PERIOD"] + i * 0.1, data[category], label=wrap_text(legend_mapping[category], 15),
-                           width=0.5,
-                           color=colors[i])
-                else:
-                    raise ValueError("Unsupported plot type")
-
-        # Set x-axis to only show integers
-        from matplotlib.ticker import MaxNLocator
-        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-
-        # Set y-axis labels to percentages
-        ax.yaxis.set_major_formatter(PercentFormatter())
-
-        ax.tick_params(labelsize=10, labelcolor=labelcolor, labelfontfamily="Helvetica")
-        ax.set_title("Generic penetration in volume (in %)", color=labelcolor, fontname="Helvetica")
-        ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
-        ax.set_ylabel("Volume of pharmaceutical sales", color=labelcolor, fontname="Helvetica")
-
-        # adjust layout to make room for legend
-        fig.subplots_adjust(right=0.75)
-        # Position the legend underneath the plot
-        ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-
-        return fig
-
-# display data for graph 6
-def display_data_6(facecolor, labelcolor, data, plottype, selectedcountry, selectedtimestart=2015,
-                   selectedtimeend=2023):
-    # filter data
-    data = data[data.index.values == selectedcountry]  # filter country
-    data = data[data.TIME_PERIOD <= selectedtimeend]  # filter end year
-    data = data[data.TIME_PERIOD >= selectedtimestart]  # filter end year
-
-    if len(data) == 0:
-        return "NO DATA"
 
     # import legend
     legendnames = pd.read_csv("Data/HC_Market_meaning.csv")
@@ -379,8 +300,8 @@ def display_data_6(facecolor, labelcolor, data, plottype, selectedcountry, selec
 
     colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
 
-    categories = ["PT_SL_VAL_M"]
-    if data.empty:
+    categories = ["PT_SL_VOL_M"]
+    if data[categories].isnull().all().all():  # show no data available if there is no data available
         fig, ax = plt.subplots()
         ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
         ax.set_axis_off()
@@ -399,6 +320,77 @@ def display_data_6(facecolor, labelcolor, data, plottype, selectedcountry, selec
             else:
                 raise ValueError("Unsupported plot type")
 
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5),
+                           prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
+
+    # Set x-axis to only show integers
+    from matplotlib.ticker import MaxNLocator
+    ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+    # Set y-axis labels to percentages
+    ax.yaxis.set_major_formatter(PercentFormatter())
+
+    ax.tick_params(labelsize=10, labelcolor=labelcolor, labelfontfamily="Helvetica")
+    ax.set_title("Generic penetration in volume (in %)", color=labelcolor, fontname="Helvetica")
+    ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
+    ax.set_ylabel("Volume of pharmaceutical sales", color=labelcolor, fontname="Helvetica")
+
+    return fig
+
+# display data for graph 6
+def display_data_6(facecolor, labelcolor, data, plottype, selectedcountry, selectedtimestart=2015,
+                   selectedtimeend=2023):
+    # filter data
+    data = data[data.index.values == selectedcountry]  # filter country
+    data = data[data.TIME_PERIOD <= selectedtimeend]  # filter end year
+    data = data[data.TIME_PERIOD >= selectedtimestart]  # filter end year
+
+    # import legend
+    legendnames = pd.read_csv("Data/HC_Market_meaning.csv")
+
+    # Create a dictionary mapping categories to their explanations
+    legend_mapping = dict(zip(legendnames["Column name"], legendnames["Meaning"]))
+
+    # Create plot
+    fig = Figure(figsize=(8, 4), facecolor=facecolor)
+    ax = fig.add_subplot()
+
+    colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
+
+    categories = ["PT_SL_VAL_M"]
+    if data[categories].isnull().all().all:  # show no data available if there is no data available
+        fig, ax = plt.subplots()
+        ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
+        ax.set_axis_off()
+    else:
+        for i, category in enumerate(categories):
+            data[category] = data[category] * 100  # Convert to percentage
+            if plottype == "line":
+                ax.plot(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 15), color=colors[i])
+            elif plottype == "scatter":
+                ax.scatter(data["TIME_PERIOD"], data[category], label=wrap_text(legend_mapping[category], 15),
+                           color=colors[i])
+            elif plottype == "bar":
+                ax.bar(data["TIME_PERIOD"] + i * 0.1, data[category], label=wrap_text(legend_mapping[category], 15),
+                       width=0.5,
+                       color=colors[i])
+            else:
+                raise ValueError("Unsupported plot type")
+
+        # adjust layout to make room for legend
+        fig.subplots_adjust(right=0.75)
+        # Position the legend underneath the plot
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
+
+
     # Set x-axis to only show integers
     from matplotlib.ticker import MaxNLocator
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -411,11 +403,6 @@ def display_data_6(facecolor, labelcolor, data, plottype, selectedcountry, selec
     ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
     ax.set_ylabel("Value of pharmaceutical sales", color=labelcolor, fontname="Helvetica")
 
-    # adjust layout to make room for legend
-    fig.subplots_adjust(right=0.75)
-    # Position the legend underneath the plot
-    ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-
     return fig
 
 # display data for graph 7
@@ -425,9 +412,6 @@ def display_data_7(facecolor, labelcolor, data, plottype, selectedcountry="GER",
     data = data[data.index.values == selectedcountry]  # filter country
     data = data[data.TIME_PERIOD <= selectedtimeend]  # filter end year
     data = data[data.TIME_PERIOD >= selectedtimestart]  # filter end year
-
-    if len(data) == 0:
-        return "NO DATA"
 
     # Add new column if not exists
     data = add_new_column_if_not_exists(data)
@@ -457,7 +441,7 @@ def display_data_7(facecolor, labelcolor, data, plottype, selectedcountry="GER",
     colors = ["#137C4C", "#1E88E5", "#D32F2F", "#8E24AA", "#FDD835", "#43A047", "#FB8C00", "#3949AB"]
 
     categories = ["PT_SL_VAL_TOTAL"]
-    if data.empty:
+    if data[categories].isnull().all().all():  # show no data available if there is no data available
         fig, ax = plt.subplots()
         ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
         ax.set_axis_off()
@@ -476,6 +460,15 @@ def display_data_7(facecolor, labelcolor, data, plottype, selectedcountry="GER",
             else:
                 raise ValueError("Unsupported plot type")
 
+        # Adjust the layout to make room for the legend
+        fig.subplots_adjust(right=0.75)
+
+        # Position the legend outside the plot area with Helvetica font
+        legend = ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5),
+                           prop={'family': 'Helvetica'})
+        legend.get_title().set_fontsize('12')  # set the title font size
+        legend.get_title().set_fontname('Helvetica')  # set the title font family
+
     # Set x-axis to only show integers
     from matplotlib.ticker import MaxNLocator
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -484,11 +477,6 @@ def display_data_7(facecolor, labelcolor, data, plottype, selectedcountry="GER",
     ax.set_title("Generic spend per capita (in dollars)", color=labelcolor, fontname="Helvetica")
     ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
     ax.set_ylabel("Value of pharmaceutical sales", color=labelcolor, fontname="Helvetica")
-
-    # adjust layout to make room for legend
-    fig.subplots_adjust(right=0.75)
-    # Position the legend underneath the plot
-    ax.legend(title="Categories", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
 
     return fig
 
@@ -502,10 +490,6 @@ def display_data_8(facecolor, labelcolor, data, plottype, selectedcountry, selec
     data8 = data8[data8.TIME_PERIOD <= selectedtimeend]  # filter end year
     data8 = data8[data8.TIME_PERIOD >= selectedtimestart]  # filter end year
 
-    if len(data8) == 0:
-        return "NO DATA"
-    
-  
     # Call the function to add meaning to the CSV file
     add_meaning_to_csv("Data/HC_Market_meaning.csv", "OBS_VALUE", "Generic pharmaceuticals spend per capita")
     
@@ -519,21 +503,23 @@ def display_data_8(facecolor, labelcolor, data, plottype, selectedcountry, selec
     regions = data8["Reference area"].drop_duplicates()
 
     # Plot each region separately
-    if data8.empty:
-        fig, ax = plt.subplots()
-        ax.text(0.5, 0.5, 'No data available', fontsize=20, ha='center', va='center')
-        ax.set_axis_off()
-    else:
-        for region in regions:
-            region_data = data8[data8['Reference area'] == region]
-            if plottype == "line":
-                ax.plot(region_data['TIME_PERIOD'], region_data[categories], label=region)
-            elif plottype == "scatter":
-                ax.scatter(region_data['TIME_PERIOD'], region_data[categories], label=region)
-            else:
-                raise ValueError("Unsupported plot type")
- 
-      
+    for region in regions:
+        region_data = data8[data8['Reference area'] == region]
+        if plottype == "line":
+            ax.plot(region_data['TIME_PERIOD'], region_data[categories], label=region)
+        elif plottype == "scatter":
+            ax.scatter(region_data['TIME_PERIOD'], region_data[categories], label=region)
+        else:
+            raise ValueError("Unsupported plot type")
+
+    # adjust layout to make room for legend
+    fig.subplots_adjust(right=0.7)
+
+    # Position the legend underneath the plot
+    legend = ax.legend(title="Regions", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
+    legend.get_title().set_fontsize('12')  # set the title font size
+    legend.get_title().set_fontname('Helvetica')  # set the title font family
+
     # Set x-axis to only show integers
     from matplotlib.ticker import MaxNLocator
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
@@ -544,9 +530,5 @@ def display_data_8(facecolor, labelcolor, data, plottype, selectedcountry, selec
     ax.set_xlabel("Year", color=labelcolor, fontname="Helvetica")
     ax.set_ylabel("Number of healthcare professionals", color=labelcolor, fontname="Helvetica")
 
-    # adjust layout to make room for legend
-    fig.subplots_adjust(right=0.7)
-    # Position the legend underneath the plot
-    ax.legend(title="Regions", loc='center left', bbox_to_anchor=(1, 0.5), prop={'family': 'Helvetica'})
-
-    return fig   
+    return fig
+    
