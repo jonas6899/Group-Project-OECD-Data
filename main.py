@@ -810,7 +810,11 @@ class App(ctk.CTk):
 
     # create function to choose countries
     def open_country_selection(self):
-        country_selection_window = CountrySelect(self, countries=countries_for_country_select, selected_countries=selected_countries)
+        if not hasattr(self, 'country_selection_window') or not self.country_selection_window.winfo_exists():
+            self.country_selection_window = CountrySelect(self, countries=countries_for_country_select,
+                                                          selected_countries=selected_countries)
+        self.country_selection_window.lift()  # bring window to the front
+            
     # create function for the apply button
     def apply_filter(self):
         self.check_graph_update = self.graph_update_menu.get()  # get value from graph update menu
@@ -860,6 +864,7 @@ class App(ctk.CTk):
             self.year_lower_limit.update_label(lower_limit_value)
             self.year_upper_limit.update_label(upper_limit_value)
 
+    # reuse function for downloading files in the beginning for refresh data button
     def refresh_data(self):
         class Root(ctk.CTk):  # create window for progress bar
             def __init__(self):
@@ -918,11 +923,10 @@ class App(ctk.CTk):
                 self.destroy()
                 print("All necessary files created.")
 
-
         root = Root()
         root.mainloop()
     
-
+    # define function that changes light/dark mode
     def change_mode(self):
         global mode
         mode = ctk.get_appearance_mode()
