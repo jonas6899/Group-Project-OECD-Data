@@ -1,7 +1,7 @@
 # list with oecd countries
 oecd_countries = [
     "Australia", "Austria", "Belgium", "Canada", "Chile", "Colombia",
-    "Costa Rica", "Czech Republic", "Denmark", "Estonia", "Finland",
+    "Costa Rica", "Denmark", "Estonia", "Finland",
     "France", "Germany", "Greece", "Hungary", "Iceland", "Ireland",
     "Israel", "Italy", "Japan", "Korea", "Latvia", "Lithuania",
     "Luxembourg", "Mexico", "Netherlands", "New Zealand", "Norway",
@@ -11,7 +11,7 @@ oecd_countries = [
 
 countries_for_country_select = [
     "Switzerland", "Australia", "Canada", "Chile",
-        "Costa Rica", "Czech Republic", "Finland",
+        "Costa Rica", "Finland",
         "Poland", "United Kingdom"
 ]
 
@@ -27,7 +27,6 @@ oecd_images = {
     "chile": "Images/Chile.png",
     "colombia": "Images/Colombia.png",
     "costa rica": "Images/Costa_Rica.png",
-    "czech republic": "Images/Europe/Czech_Republic.png",
     "denmark": "Images/Europe/Denmark.png",
     "estonia": "Images/Europe/Estonia.png",
     "finland": "Images/Europe/Finland.png",
@@ -95,7 +94,6 @@ oecd_iso_access = {
         "Slovak Republic": "SVK",
         "Slovenia": "SVN",
         "Spain": "ESP",
-        "Czech Republic": "CZE",
     "Turkey": "TUR",
     "Hungary": "HUN",
     "United Kingdom": "GBR",
